@@ -1,6 +1,6 @@
 ## inputs:
 ##      BW_files_list: list of /path/to/file.bigwig
-##      loci_list: list of chr1:10,000,000-10,001,000
+##      loci_list: list of chr1 10000000    10001000
 ##      output_file: /path/to/output.tsv
 
 import numpy as np
@@ -18,21 +18,16 @@ with open(BW_files_list, 'r') as file:
     for line in file:
         BW_files.extend(line.split()) 
 
-loci_list = []
+loci_list = pd.read_csv(loci_file, header=None, sep='\t')
 
-with open(loci_file, 'r') as file:
-    for line in file:
-        loci_list.extend(line.split()) 
 
 dataframe = pd.DataFrame(data={'File': BW_files})
 
-for locus in loci_list:
-
-    chrom = locus.split(':')[0]
-    print(chrom)
-    location = locus.split(':')[1]
-    loc1 = int((location.split('-')[0]).replace(',', ""))
-    loc2 = int(location.split('-')[1].replace(',', ""))
+for locus in (range(0,len(loci_list))):
+    print(locus)
+    chrom = loci_list.iat[locus,0].split()[0]
+    loc1 = int(loci_list.iat[locus,0].split()[1])
+    loc2 = int(loci_list.iat[locus,0].split()[2])
     print(loc1)
     print(loc2)
 
@@ -47,3 +42,4 @@ for locus in loci_list:
 
     dataframe[locus] = signal_values
 dataframe.to_csv(output_name, sep='\t', index=False)
+
